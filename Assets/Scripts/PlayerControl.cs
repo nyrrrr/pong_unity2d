@@ -10,6 +10,7 @@ public class PlayerControl : MonoBehaviour
     float fSpeed = 13f;
     Rigidbody2D rigGo;
     public bool isPlayerA = true;
+    bool hasMoved = false;
 
     // init
     void Awake()
@@ -24,9 +25,9 @@ public class PlayerControl : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        _PositionPaddleOnLeftSideOfScreen();
+        _PositionPaddleOnSideOfScreen();
         if (isPlayerA) _MoveOnInput();
     }
 
@@ -35,19 +36,20 @@ public class PlayerControl : MonoBehaviour
         fVertical = Input.GetAxisRaw("Vertical");
         if (fVertical != 0)
         {
+            hasMoved = true;
             rigGo.velocity = Vector2.up * fVertical * fSpeed;
         }
         else rigGo.velocity = Vector2.zero;
     }
 
-    private void _PositionPaddleOnLeftSideOfScreen()
+    private void _PositionPaddleOnSideOfScreen()
     {
         if (isPlayerA)
             vPaddlePlayerPos = new Vector2(32, 0);
         else
             vPaddlePlayerPos = new Vector2(Screen.width - 32, 0);
         vPaddlePlayerPos.x = (Camera.main.ScreenToWorldPoint(vPaddlePlayerPos)).x;
-        vPaddlePlayerPos.y = 0;
+        vPaddlePlayerPos.y = (hasMoved ? go.position.y : 0);
         go.position = vPaddlePlayerPos;
     }
 }
