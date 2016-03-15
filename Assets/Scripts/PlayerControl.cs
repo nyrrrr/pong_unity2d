@@ -5,13 +5,15 @@ public class PlayerControl : MonoBehaviour
 {
 
     Transform go;
-    Vector2 paddlePlayerPos;
-    float vertical = 0;
-    float speed = 0.2f;
+    Vector2 vPaddlePlayerPos = Vector2.zero;
+    float fVertical = 0;
+    float fSpeed = 13f;
+    Rigidbody2D rigGo;
 
     void Awake()
     {
         go = this.transform;
+        rigGo = this.GetComponent<Rigidbody2D>();
     }
 
     // Update is called once per frame
@@ -23,16 +25,20 @@ public class PlayerControl : MonoBehaviour
 
     private void _MoveOnInput()
     {
-        vertical = Input.GetAxisRaw("Vertical");
-        if (vertical != 0)
-            go.position = new Vector2(go.position.x, go.position.y + (vertical * speed));
+        fVertical = Input.GetAxisRaw("Vertical");
+        if (fVertical != 0)
+        {
+            rigGo.velocity = Vector2.up * fVertical * fSpeed;
+        }
+        else rigGo.velocity = Vector2.zero;
+            //go.position = new Vector2(go.position.x, go.position.y + (fVertical * fSpeed));
     }
 
     private void _PositionPaddleOnLeftSideOfScreen()
     {
-        paddlePlayerPos = new Vector2(32, 0);
-        paddlePlayerPos.x = (Camera.main.ScreenToWorldPoint(paddlePlayerPos)).x;
-        paddlePlayerPos.y = go.position.y;
-        go.position = paddlePlayerPos;
+        vPaddlePlayerPos = new Vector2(32, 0);
+        vPaddlePlayerPos.x = (Camera.main.ScreenToWorldPoint(vPaddlePlayerPos)).x;
+        vPaddlePlayerPos.y = go.position.y;
+        go.position = vPaddlePlayerPos;
     }
 }
