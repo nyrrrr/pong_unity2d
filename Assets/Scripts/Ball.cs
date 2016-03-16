@@ -7,7 +7,7 @@ public class Ball : MonoBehaviour
 
     Rigidbody2D rigGo;
     Transform go;
-    float fSpeed = 8f, fCollisionValue = 0f, fMaxSpeed = 14f;
+    float fSpeed = 10f, fCollisionValue = 0f, fMaxSpeed = 14f;
     AudioSource audio;
 
     // init
