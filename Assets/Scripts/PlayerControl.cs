@@ -6,19 +6,22 @@ public class PlayerControl : MonoBehaviour
 
     Transform go, ball;
     Vector2 vPaddlePlayerPos = Vector2.zero;
+
     float fVertical = 0;
     float fSpeed = 13f;
+    float fBallPaddleDistance;
+
     Rigidbody2D rigGo;
+    Collider2D col;
     public bool isPlayerA = true;
     bool hasMoved = false;
-    private bool isAIMoving = false;
-    float fBallPaddleDistance;
 
     // init
     void Awake()
     {
         go = this.transform;
         rigGo = this.GetComponent<Rigidbody2D>();
+        col = this.GetComponent<Collider2D>();
         ball = GameObject.Find("Ball").transform;
     }
 
@@ -38,12 +41,12 @@ public class PlayerControl : MonoBehaviour
             if (ball.position.x > -2f && ball.GetComponent<Rigidbody2D>().velocity.x > 0)
             {
                 hasMoved = true;
-                fBallPaddleDistance = ball.position.y - go.position.y;
-                if (fBallPaddleDistance > 0)
+
+                if (ball.position.y - go.position.y - col.bounds.size.y > 0)
                 {
                     rigGo.velocity = Vector2.up * fSpeed;
                 }
-                else if (fBallPaddleDistance < 0)
+                else if (ball.position.y - go.position.y < 0)
                 {
                     rigGo.velocity = Vector2.up * fSpeed * -1;
                 }
