@@ -20,7 +20,8 @@ public class PlayerControl : MonoBehaviour
     }
 
     // start setup
-    void Start() {
+    void Start()
+    {
         go.position = new Vector2(go.position.x, 0);
     }
 
