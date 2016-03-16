@@ -4,19 +4,22 @@ using System.Collections;
 public class PlayerControl : MonoBehaviour
 {
 
-    Transform go;
+    Transform go, ball;
     Vector2 vPaddlePlayerPos = Vector2.zero;
     float fVertical = 0;
     float fSpeed = 13f;
     Rigidbody2D rigGo;
     public bool isPlayerA = true;
     bool hasMoved = false;
+    private bool isAIMoving = false;
+    float fBallPaddleDistance;
 
     // init
     void Awake()
     {
         go = this.transform;
         rigGo = this.GetComponent<Rigidbody2D>();
+        ball = GameObject.Find("Ball").transform;
     }
 
     // start setup
@@ -30,6 +33,24 @@ public class PlayerControl : MonoBehaviour
     {
         _PositionPaddleOnSideOfScreen();
         if (isPlayerA) _MoveOnInput();
+        else
+        {  // AI movement
+            if (ball.position.x > -2f && ball.GetComponent<Rigidbody2D>().velocity.x > 0)
+            {
+                hasMoved = true;
+                fBallPaddleDistance = ball.position.y - go.position.y;
+                if (fBallPaddleDistance > 0)
+                {
+                    rigGo.velocity = Vector2.up * fSpeed;
+                }
+                else if (fBallPaddleDistance < 0)
+                {
+                    rigGo.velocity = Vector2.up * fSpeed * -1;
+                }
+            }
+            else
+                rigGo.velocity = Vector2.zero;
+        }
     }
 
     private void _MoveOnInput()
