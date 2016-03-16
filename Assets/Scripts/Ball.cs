@@ -12,6 +12,8 @@ public class Ball : MonoBehaviour
     TrailRenderer trail;
 
     int iScorePlayer = 0, iScoreAI = 0;
+    public TextMesh texPlayer, texAI, texGameOver;
+    private bool isGameOver = false;
 
     // init
     void Awake()
@@ -28,6 +30,7 @@ public class Ball : MonoBehaviour
     // start setup
     void Start()
     {
+        texGameOver.gameObject.SetActive(false);
         _SetupNewRound();
     }
 
@@ -35,8 +38,14 @@ public class Ball : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        if (isGameOver)
+        {
+            rigGo.velocity = Vector2.zero;
+            if (Input.anyKeyDown)
+                UnityEngine.SceneManagement.SceneManager.LoadScene("game"); // LOLOL
+        }
         // lol
-        if (rigGo.velocity.magnitude < fSpeed || rigGo.velocity.magnitude > fMaxSpeed) rigGo.velocity = new Vector2(Mathf.Lerp(rigGo.velocity.x, (rigGo.velocity.normalized * fSpeed).x, Time.deltaTime * fSpeed), Mathf.Lerp(rigGo.velocity.y, (rigGo.velocity.normalized * fSpeed).y, Time.deltaTime));
+        else if (rigGo.velocity.magnitude < fSpeed || rigGo.velocity.magnitude > fMaxSpeed) rigGo.velocity = new Vector2(Mathf.Lerp(rigGo.velocity.x, (rigGo.velocity.normalized * fSpeed).x, Time.deltaTime * fSpeed), Mathf.Lerp(rigGo.velocity.y, (rigGo.velocity.normalized * fSpeed).y, Time.deltaTime));
     }
 
     void OnCollisionEnter2D(Collision2D col)
@@ -49,9 +58,15 @@ public class Ball : MonoBehaviour
     {
         trail.Clear();
         if (iScoreAI == 10 || iScorePlayer == 10)
-            Debug.Log("GAMEOVER"); // TODO do game over stuff
-        go.position = Vector2.zero;
-        rigGo.velocity = new Vector2(Random.Range(-0.5f, 0.5f), Random.Range(-0.25f, 0.25f)).normalized * fSpeed;
+        {
+            isGameOver = true;
+            texGameOver.gameObject.SetActive(true);
+        }
+        if (!isGameOver)
+        {
+            go.position = Vector2.zero;
+            rigGo.velocity = new Vector2(Random.Range(-0.5f, 0.5f), Random.Range(-0.25f, 0.25f)).normalized * fSpeed;
+        }
     }
 
     private void _BounceOffPaddle(Collision2D col)
@@ -72,9 +87,16 @@ public class Ball : MonoBehaviour
         else
         {
             audio.clip = aScore;
-            if (col.gameObject.GetComponent<ScoreWalls>().isLeftWall) iScorePlayer++;
-            else iScoreAI++;
-            Debug.Log(iScorePlayer + " : " + iScoreAI);
+            if (col.gameObject.GetComponent<ScoreWalls>().isLeftWall)
+            {
+                iScorePlayer++;
+                texPlayer.text = iScorePlayer.ToString();
+            }
+            else
+            {
+                //iScoreAI++;
+                texAI.text = (++iScoreAI).ToString();
+            }
             _SetupNewRound();
         }
         audio.Play();
