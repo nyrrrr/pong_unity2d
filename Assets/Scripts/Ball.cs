@@ -36,8 +36,9 @@ public class Ball : MonoBehaviour
         }
     }
 
+    // not calculating a real "angle"
     private float _GetCollisionAngle(float fBallY, float fPaddleY, float fPaddleSize)
     {
-        return (fPaddleY - fBallY) / fPaddleSize;
+        return (fBallY - fPaddleY) / fPaddleSize;
     }
 }
