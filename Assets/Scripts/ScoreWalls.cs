@@ -1,10 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Wall : MonoBehaviour
-{
+public class ScoreWalls : MonoBehaviour {
 
-    public bool isTopWall = true;
+    public bool isLeftWall = true;
     Transform go;
     Vector2 vWallPosition = Vector2.zero;
 
@@ -22,12 +21,12 @@ public class Wall : MonoBehaviour
 
     private void _PositionOnSideOfScreen()
     {
-        if (isTopWall)
-            vWallPosition = new Vector2(0, Screen.height);
+        if (isLeftWall)
+            vWallPosition = new Vector2(Screen.width, 0);
         else
             vWallPosition = new Vector2(0, 0);
-        vWallPosition.y = (Camera.main.ScreenToWorldPoint(vWallPosition)).y;
-        vWallPosition.x = go.position.x;
+        vWallPosition.x = (Camera.main.ScreenToWorldPoint(vWallPosition)).x;
+        vWallPosition.y = go.position.y;
         go.position = vWallPosition;
     }
 }
