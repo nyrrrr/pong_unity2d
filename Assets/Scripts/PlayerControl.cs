@@ -8,8 +8,9 @@ public class PlayerControl : MonoBehaviour
     Vector2 vPaddlePlayerPos = Vector2.zero;
 
     float fVertical = 0;
-    float fSpeed = 13f;
+    float fSpeed = 16f;
     float fBallPaddleDistance;
+    float fRandomness = 0f;
 
     Rigidbody2D rigGo;
     Collider2D col;
@@ -38,22 +39,29 @@ public class PlayerControl : MonoBehaviour
         if (isPlayerA) _MoveOnInput();
         else
         {  // AI movement
-            if (ball.position.x > -2f && ball.GetComponent<Rigidbody2D>().velocity.x > 0)
-            {
-                hasMoved = true;
-
-                if (ball.position.y - go.position.y - col.bounds.size.y > 0)
-                {
-                    rigGo.velocity = Vector2.up * fSpeed;
-                }
-                else if (ball.position.y - go.position.y < 0)
-                {
-                    rigGo.velocity = Vector2.up * fSpeed * -1;
-                }
-            }
-            else
-                rigGo.velocity = Vector2.zero;
+            _MoveAI();
         }
+    }
+
+    private void _MoveAI()
+    {
+        if (ball.position.x > -2f && ball.GetComponent<Rigidbody2D>().velocity.x > 0)
+        {
+            hasMoved = true;
+
+            fRandomness = Random.Range(0f, 1f);
+
+            if (ball.position.y - go.position.y - col.bounds.size.y > 0 && fRandomness > 0.25f)
+            {
+                rigGo.velocity = Vector2.up * fSpeed;
+            }
+            else if (ball.position.y - go.position.y + col.bounds.size.y < 0 && fRandomness > 0.25f)
+            {
+                rigGo.velocity = Vector2.up * fSpeed * -1f;
+            }
+        }
+        else
+            rigGo.velocity = Vector2.zero;
     }
 
     private void _MoveOnInput()

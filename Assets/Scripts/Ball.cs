@@ -35,7 +35,6 @@ public class Ball : MonoBehaviour
         _SetupNewRound();
     }
 
-
     void Update()
     {
         if (iScoreAI == I_WIN_SCORE || iScorePlayer == I_WIN_SCORE)
