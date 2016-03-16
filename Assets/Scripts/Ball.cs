@@ -6,7 +6,7 @@ public class Ball : MonoBehaviour
 
     Rigidbody2D rigGo;
     Transform go;
-    float fSpeed = 8f, fCollisionValue = 0f;
+    float fSpeed = 8f, fCollisionValue = 0f, fMaxSpeed = 14f;
     // init
     void Awake()
     {
@@ -19,13 +19,13 @@ public class Ball : MonoBehaviour
     {
 
         rigGo.velocity = new Vector2(Random.Range(-0.5f, 0.5f), Random.Range(-0.25f, 0.25f)).normalized * fSpeed;
-        //transform.Translate(Vector3(randomX, randomY, 0) * moveSpeed * Time.deltaTime);
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        if (rigGo.velocity.magnitude < fSpeed) rigGo.velocity = rigGo.velocity.normalized * fSpeed;
+        if (rigGo.velocity.magnitude < fSpeed || rigGo.velocity.magnitude > fMaxSpeed) rigGo.velocity = new Vector2(Mathf.Lerp(rigGo.velocity.x, (rigGo.velocity.normalized * fSpeed).x, Time.deltaTime * fSpeed), Mathf.Lerp(rigGo.velocity.y, (rigGo.velocity.normalized * fSpeed).y, Time.deltaTime));
+        Debug.Log("Speed: " + rigGo.velocity.magnitude);
     }
 
     void OnCollisionEnter2D(Collision2D col)
