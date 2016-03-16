@@ -13,7 +13,8 @@ public class Ball : MonoBehaviour
 
     int iScorePlayer = 0, iScoreAI = 0;
     public TextMesh texPlayer, texAI, texGameOver;
-    private bool isGameOver = false;
+    private bool isGameOver = false, isGameResetBlocked = true;
+    private const int I_WIN_SCORE = 10;
 
     // init
     void Awake()
@@ -35,17 +36,29 @@ public class Ball : MonoBehaviour
     }
 
 
+    void Update()
+    {
+        if (iScoreAI == I_WIN_SCORE || iScorePlayer == I_WIN_SCORE)
+        {
+            StartCoroutine(_BlockInput());
+            isGameOver = true;
+            texGameOver.gameObject.SetActive(true);
+            rigGo.velocity = Vector2.zero;
+
+            if (Input.anyKeyDown && !isGameResetBlocked)
+                UnityEngine.SceneManagement.SceneManager.LoadScene("game"); // LOLOL
+        }
+    }
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (isGameOver)
-        {
-            rigGo.velocity = Vector2.zero;
-            if (Input.anyKeyDown)
-                UnityEngine.SceneManagement.SceneManager.LoadScene("game"); // LOLOL
-        }
-        // lol
-        else if (rigGo.velocity.magnitude < fSpeed || rigGo.velocity.magnitude > fMaxSpeed) rigGo.velocity = new Vector2(Mathf.Lerp(rigGo.velocity.x, (rigGo.velocity.normalized * fSpeed).x, Time.deltaTime * fSpeed), Mathf.Lerp(rigGo.velocity.y, (rigGo.velocity.normalized * fSpeed).y, Time.deltaTime));
+        if (!isGameOver && (rigGo.velocity.magnitude < fSpeed || rigGo.velocity.magnitude > fMaxSpeed)) rigGo.velocity = new Vector2(Mathf.Lerp(rigGo.velocity.x, (rigGo.velocity.normalized * fSpeed).x, Time.deltaTime * fSpeed), Mathf.Lerp(rigGo.velocity.y, (rigGo.velocity.normalized * fSpeed).y, Time.deltaTime));
+    }
+
+    private IEnumerator _BlockInput()
+    {
+        yield return new WaitForSeconds(4f);
+        isGameResetBlocked = false;
     }
 
     void OnCollisionEnter2D(Collision2D col)
@@ -57,11 +70,6 @@ public class Ball : MonoBehaviour
     private void _SetupNewRound()
     {
         trail.Clear();
-        if (iScoreAI == 10 || iScorePlayer == 10)
-        {
-            isGameOver = true;
-            texGameOver.gameObject.SetActive(true);
-        }
         if (!isGameOver)
         {
             go.position = Vector2.zero;
@@ -89,12 +97,10 @@ public class Ball : MonoBehaviour
             audio.clip = aScore;
             if (col.gameObject.GetComponent<ScoreWalls>().isLeftWall)
             {
-                iScorePlayer++;
-                texPlayer.text = iScorePlayer.ToString();
+                texPlayer.text = (++iScorePlayer).ToString();
             }
             else
             {
-                //iScoreAI++;
                 texAI.text = (++iScoreAI).ToString();
             }
             _SetupNewRound();
